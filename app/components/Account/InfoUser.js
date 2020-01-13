@@ -1,6 +1,9 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Avatar } from "react-native-elements";
+import * as firebase from "firebase";
+import * as Permissions from "expo-permissions";
+import * as ImagePicker from "expo-image-picker";
 
 export default function InfoUser(props) {
   const {
@@ -10,10 +13,31 @@ export default function InfoUser(props) {
 
   console.log(userInfo);
 
-  const changeAvatar = () => {
-    console.log("cambiando avatar");
+  const changeAvatar = async () => {
+    const resultPermission = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL
+    );
+    const resultPermissionCamera =
+      resultPermission.permissions.cameraRoll.status;
+    if (resultPermissionCamera === "denied") {
+      console.log("Es necesario aceptar los permisos");
+    } else {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3]
+      });
+      if (result.cancelled == true) {
+        console.log("Has cerrado la galería de imagenes");
+      } else {
+        uploadImage(result.uri, uid);
+      }
+    }
   };
 
+  const uploadImage = (uri, nameImage) => {
+    console.log("URI:" + uri);
+    console.log("nameImage:" + nameImage);
+  };
   return (
     <View style={styles.viewUserInfo}>
       <Avatar
