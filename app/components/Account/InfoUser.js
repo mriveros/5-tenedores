@@ -29,14 +29,21 @@ export default function InfoUser(props) {
       if (result.cancelled == true) {
         console.log("Has cerrado la galería de imagenes");
       } else {
-        uploadImage(result.uri, uid);
+        uploadImage(result.uri, uid).then(() => {
+          console.log("Imagen subida correctamente.");
+        });
       }
     }
   };
 
-  const uploadImage = (uri, nameImage) => {
-    console.log("URI:" + uri);
-    console.log("nameImage:" + nameImage);
+  const uploadImage = async (uri, nameImage) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const ref = firebase
+      .storage()
+      .ref()
+      .child("avatar/" + nameImage);
+    return ref.put(blob);
   };
   return (
     <View style={styles.viewUserInfo}>
