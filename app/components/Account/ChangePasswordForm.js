@@ -41,6 +41,7 @@ export default function ChangePasswordForm(props) {
                 setIsLoading(false);
                 toastRef.current.show("Contraseña actualizada correctamente");
                 setIsVisibleModal(false);
+                firebase.auth().signOut();
               })
               .catch(() => {
                 setError({ general: "Error al actualizar la contraseña." });
