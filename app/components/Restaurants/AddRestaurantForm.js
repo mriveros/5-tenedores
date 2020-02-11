@@ -26,33 +26,69 @@ function UploadImagen(props) {
       Permissions.CAMERA_ROLL
     );
 
-    const resultPermissionCamera =
-      resultPermission.permissions.cameraROLL.status;
-    console.log(resultPermissionCamera);
-
-    if (resultPermissionCamera === "denied") {
+    const resultPermissionCamera = resultPermission.permissions.cameraRoll;
+    if (resultPermissionCamera.status === "denied") {
       toastRef.current.show(
         "Es necesario aceptar los permisos de la galeria, si los has rechazado tienes que ir a ajustes y activarlos manualmente",
         5000
       );
     } else {
-      console.log("correcto");
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3]
+      });
+      if (result.cancelled) {
+        toastRef.current.show(
+          "Has cerrado la galería sin seleccionar ninguna imagen.",
+          3000
+        );
+      } else {
+        setImagesSelected([...imagesSelected, result.uri]);
+      }
     }
   };
+  const removeImage = image => {
+    const arrayImages = imagesSelected;
+    Alert.alert(
+      "Eliminar Imagen.",
+      "Estas seguro de eliminar la imagen?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "eliminar",
+          onPress: () =>
+            setImagesSelected(
+              arrayImages.filter(imageUrl => imageUrl !== image)
+            )
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
+  console.log(imagesSelected);
   return (
     <View style={styles.viewImages}>
-      <Icon
-        type="material-community"
-        name="camera"
-        color="#7a7a7a"
-        containerStyle={styles.containerIcon}
-        onPress={imageSelect}
-      />
-      <Avatar
-        onPress={() => console.log("eliminando imagen")}
-        style={styles.miniatureStyle}
-        //source={{// url miniatura del restaurante}}
-      />
+      {imagesSelected.length < 5 && (
+        <Icon
+          type="material-community"
+          name="camera"
+          color="#7a7a7a"
+          containerStyle={styles.containerIcon}
+          onPress={imageSelect}
+        />
+      )}
+      {imagesSelected.map(imageRestaurant => (
+        <Avatar
+          key={imageRestaurant}
+          onPress={() => removeImage(imageRestaurant)}
+          style={styles.miniatureStyle}
+          source={{ uri: imageRestaurant }}
+        />
+      ))}
     </View>
   );
 }
