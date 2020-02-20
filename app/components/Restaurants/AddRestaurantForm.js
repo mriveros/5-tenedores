@@ -4,17 +4,39 @@ import { Icon, Avatar, Image, Input, Button } from "react-native-elements";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
+const WidthScreen = Dimensions.get("window").width;
+
 export default function AddRestaurantForm(props) {
   const { toastRef, setIsLoading, navigation } = props;
   const [imagesSelected, setImagesSelected] = useState([]);
   return (
     <ScrollView>
+      <ImageRestaurant imageRestaurant={imagesSelected[0]} />
       <UploadImagen
         imagesSelected={imagesSelected}
         setImagesSelected={setImagesSelected}
         toastRef={toastRef}
       />
     </ScrollView>
+  );
+}
+function ImageRestaurant(props) {
+  const { imageRestaurant } = props;
+
+  return (
+    <View style={styles.viewPhoto}>
+      {imageRestaurant ? (
+        <Image
+          source={{ uri: imageRestaurant }}
+          style={{ width: WidthScreen, height: 200 }}
+        />
+      ) : (
+        <Image
+          source={require("../../../assets/img/no-image.png")}
+          style={{ width: WidthScreen, height: 200 }}
+        />
+      )}
+    </View>
   );
 }
 
@@ -94,6 +116,11 @@ function UploadImagen(props) {
 }
 
 const styles = StyleSheet.create({
+  viewPhoto: {
+    alignItems: "center",
+    height: 200,
+    marginBottom: 20
+  },
   viewImages: {
     flexDirection: "row",
     marginLeft: 20,
