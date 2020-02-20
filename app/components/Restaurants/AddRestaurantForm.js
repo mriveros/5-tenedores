@@ -9,15 +9,28 @@ const WidthScreen = Dimensions.get("window").width;
 export default function AddRestaurantForm(props) {
   const { toastRef, setIsLoading, navigation } = props;
   const [imagesSelected, setImagesSelected] = useState([]);
+  const [restaurantName, setRestaurantName] = useState("");
+  const [restaurantAddress, setRestaurantAddress] = useState("");
+  const [restaurantDescription, setRestaurantDescription] = useState("");
+  const send = () => {
+    console.log(restaurantName);
+    console.log(restaurantAddress);
+    console.log(restaurantDescription);
+  };
   return (
     <ScrollView>
       <ImageRestaurant imageRestaurant={imagesSelected[0]} />
-      <FormAdd />
+      <FormAdd
+        setRestaurantName={setRestaurantName}
+        setRestaurantAddress={setRestaurantAddress}
+        setRestaurantDescription={setRestaurantDescription}
+      />
       <UploadImagen
         imagesSelected={imagesSelected}
         setImagesSelected={setImagesSelected}
         toastRef={toastRef}
       />
+      <Button title="Enciar" onPress={send} />
     </ScrollView>
   );
 }
@@ -117,16 +130,21 @@ function UploadImagen(props) {
 }
 
 function FormAdd(props) {
+  const {
+    setRestaurantName,
+    setRestaurantAddress,
+    setRestaurantDescription
+  } = props;
   return (
     <View style={styles.viewForm}>
       <Input
         placeholder="nombre del Restaurante"
         containerStyle={styles.input}
-        onChange={() => console.log("nombre del restaurante actualizado")}
+        onChange={e => setRestaurantName(e.nativeEvent.text)}
       />
 
       <Input
-        placeholder="dirección"
+        placeholder="Dirección"
         containerStyle={styles.input}
         rightIcon={{
           type: "material-community",
@@ -134,13 +152,13 @@ function FormAdd(props) {
           color: "#c2c2c2",
           onPress: () => console.log("Selecciona la ubicación")
         }}
-        onChange={() => console.log("direccion del restaurante actualizado")}
+        onChange={e => setRestaurantAddress(e.nativeEvent.text)}
       />
       <Input
         placeholder="Descripción del restaurante"
         multiline={true}
         containerStyle={styles.textArea}
-        onChange={() => console.log("descripción actualizada")}
+        onChange={e => setRestaurantDescription(e.nativeEvent.text)}
       />
     </View>
   );
