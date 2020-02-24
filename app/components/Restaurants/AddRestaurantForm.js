@@ -36,7 +36,28 @@ export default function AddRestaurantForm(props) {
     } else {
       setIsLoading(true);
       uploadImageStorage(imagesSelected).then(arrayImages => {
-        console.log(arrayImages);
+        db.collection("restaurants")
+          .add({
+            name: restaurantName,
+            address: restaurantAddress,
+            description: restaurantDescription,
+            location: locationRestaurant,
+            images: arrayImages,
+            rating: 0,
+            ratingTotal: 0,
+            createAt: new Date(),
+            createBy: firebaseApp.auth().currentUser.uid
+          })
+          .then(() => {
+            setIsLoading(false);
+            navigation.navigate("Restaurants");
+          })
+          .catch(error => {
+            setIsLoading(false);
+            toastRef.current.show(
+              "Error al subir el restaurante, intente más tarde"
+            );
+          });
       });
     }
   };
@@ -158,7 +179,6 @@ function UploadImagen(props) {
     );
   };
 
-  console.log(imagesSelected);
   return (
     <View style={styles.viewImages}>
       {imagesSelected.length < 5 && (
