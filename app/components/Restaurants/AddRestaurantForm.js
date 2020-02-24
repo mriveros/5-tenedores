@@ -3,9 +3,15 @@ import { StyleSheet, View, ScrollView, Alert, Dimensions } from "react-native";
 import { Icon, Avatar, Image, Input, Button } from "react-native-elements";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
 import MapView from "react-native-maps";
 import Modal from "../Modal";
-import * as Location from "expo-location";
+import { uuid } from "uuidv4";
+
+import { firebaseApp } from "../../utils/FireBase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+const db = firebase.firestore(firebaseApp);
 
 const WidthScreen = Dimensions.get("window").width;
 
@@ -18,11 +24,40 @@ export default function AddRestaurantForm(props) {
   const [isVisibleMap, setIsVisibleMap] = useState(false);
   const [locationRestaurant, setLocationRestaurant] = useState(null);
 
-  const send = () => {
-    console.log(restaurantName);
-    console.log(restaurantAddress);
-    console.log(restaurantDescription);
+  const addRestaurant = () => {
+    if (!restaurantName || !restaurantAddress || !restaurantDescription) {
+      toastRef.current.show(
+        "Todos los campos del formulario son obligatorios."
+      );
+    } else if (imagesSelected.length === 0) {
+      toastRef.current.show("El Restaurante debe tener al menos una foto.");
+    } else if (!locationRestaurant) {
+      toastRef.current.show("Tienes que localizar el restaurante en el mapa.");
+    } else {
+      setIsLoading(true);
+      uploadImageStorage(imagesSelected).then(arrayImages => {
+        console.log(arrayImages);
+      });
+    }
   };
+  const uploadImageStorage = async imageArray => {
+    const imagesBlob = [];
+    await Promise.all(
+      imageArray.map(async image => {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        const ref = firebase
+          .storage()
+          .ref("restaurant-images")
+          .child(uuid());
+        await ref.put(blob).then(result => {
+          imagesBlob.push(result.metadata.name);
+        });
+      })
+    );
+    return imagesBlob;
+  };
+
   return (
     <ScrollView>
       <ImageRestaurant imageRestaurant={imagesSelected[0]} />
@@ -38,13 +73,17 @@ export default function AddRestaurantForm(props) {
         setImagesSelected={setImagesSelected}
         toastRef={toastRef}
       />
+      <Button
+        title="Crear Restaurante"
+        onPress={addRestaurant}
+        buttonStyle={styles.btnAddRestaurant}
+      />
       <Map
         isVisibleMap={isVisibleMap}
         setIsVisibleMap={setIsVisibleMap}
         setLocationRestaurant={setLocationRestaurant}
         toastRef={toastRef}
       />
-      <Button title="Enviar" onPress={send} />
     </ScrollView>
   );
 }
@@ -314,5 +353,9 @@ const styles = StyleSheet.create({
   },
   viewMapBtnCancel: {
     backgroundColor: "#a60d0d"
+  },
+  btnAddRestaurant: {
+    backgroundColor: "#00a680",
+    margin: 20
   }
 });
