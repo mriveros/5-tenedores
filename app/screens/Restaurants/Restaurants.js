@@ -49,7 +49,7 @@ export default function Restaurants(props) {
   }, []);
   return (
     <View style={styles.viewBody}>
-      <ListRestaurants restaurats={restaurants} />
+      <ListRestaurants restaurants={restaurants} isLoading={isLoading} />
       {user && <AddRestaurantButton navigation={navigation} />}
     </View>
   );
