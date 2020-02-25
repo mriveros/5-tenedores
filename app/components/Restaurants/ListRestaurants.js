@@ -22,10 +22,10 @@ export default function ListsRestaurants(props) {
           keyExtractor={(item, index) => index.toString()}
           //onEndReached= {}
           onEndReachedThreshold={0}
-          //ListFooterComponent={}
+          ListFooterComponent={<FooterList isLoading={isLoading} />}
         />
       ) : (
-        <View style={styles.loadingRestaurants}>
+        <View style={styles.loaderRestaurants}>
           <ActivityIndicator size="large" />
           <Text>Cargando restaurantes</Text>
         </View>
@@ -71,6 +71,24 @@ function Restaurant(props) {
     </TouchableOpacity>
   );
 }
+
+function FooterList(props) {
+  const { isLoading } = props;
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingRestaurants}>
+        <ActivityIndicator />
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.notFoundRestaurants}>
+        <Text>No quedan restaurantes por cargar</Text>
+      </View>
+    );
+  }
+}
 const styles = StyleSheet.create({
   loadingRestaurants: {
     marginTop: 20,
@@ -98,5 +116,14 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     color: "grey",
     width: 300
+  },
+  loaderRestaurants: {
+    marginTop: 10,
+    marginBottom: 10
+  },
+  notFoundRestaurants: {
+    marginTop: 10,
+    marginBottom: 20,
+    alignItems: "center"
   }
 });
