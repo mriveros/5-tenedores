@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import ActionButton from "react-native-action-button";
-import * as firebase from "firebase";
+
+import { firebaseApp } from "../../utils/FireBase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+const db = firebase.firestore(firebaseApp);
 
 export default function Restaurants(props) {
   const { navigation } = props;
