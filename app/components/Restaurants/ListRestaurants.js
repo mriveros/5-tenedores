@@ -33,7 +33,7 @@ export default function ListsRestaurants(props) {
     </View>
   );
 }
-
+//function Restaurant es un componente <Restaurant/>
 function Restaurant(props) {
   const { restaurant } = props;
   const { name, address, description, images } = restaurant.item.restaurant;
@@ -71,7 +71,7 @@ function Restaurant(props) {
     </TouchableOpacity>
   );
 }
-
+//function FooterList es un componente <FooterList/>
 function FooterList(props) {
   const { isLoading } = props;
 
