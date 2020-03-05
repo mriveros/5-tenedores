@@ -30,7 +30,7 @@ export default function Restaurants(props) {
         setTotalRestaurants(snap.size);
       });
     (async () => {
-      let resultRestaurants = [];
+      const resultRestaurants = [];
       const restaurants = db
         .collection("restaurants")
         .orderBy("createAt", "desc")
@@ -47,9 +47,39 @@ export default function Restaurants(props) {
       });
     })();
   }, []);
+
+  const handleLoadMore = async () => {
+    const resultRestaurant = [];
+    restaurant.length < totalRestaurants && setIsLoading(true);
+    const restaurantDb = db
+      .collection("restaurants")
+      .orderBy("createAt", "desc")
+      .startAfter(startRestaurants.data().createAt)
+      .limit(8);
+
+    await restaurant.Db.get().then(response => {
+      if (response.docs.length > 0) {
+        setStartRestaurants(response.docs[response.docs.length - 1]);
+      } else {
+        setIsLoading(false);
+      }
+
+      response.forEach(doc => {
+        let restaurant = doc.data();
+        restaurant.id = doc.id;
+        resultRestaurant.push({ restaurant });
+      });
+      setRestaurants([...restaurants, ...resultRestaurant]);
+    });
+  };
+
   return (
     <View style={styles.viewBody}>
-      <ListRestaurants restaurants={restaurants} isLoading={isLoading} />
+      <ListRestaurants
+        restaurants={restaurants}
+        isLoading={isLoading}
+        handleLoadMore={handleLoadMore}
+      />
       {user && <AddRestaurantButton navigation={navigation} />}
     </View>
   );
