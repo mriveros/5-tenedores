@@ -16,7 +16,7 @@ const db = firebase.firestore(firebaseApp);
 const WidthScreen = Dimensions.get("window").width;
 
 export default function AddRestaurantForm(props) {
-  const { toastRef, setIsLoading, navigation } = props;
+  const { toastRef, setIsLoading, navigation } = props; // setIsReloadRestaurants => me falta esta variable
   const [imagesSelected, setImagesSelected] = useState([]);
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantAddress, setRestaurantAddress] = useState("");
@@ -54,6 +54,7 @@ export default function AddRestaurantForm(props) {
           })
           .catch(error => {
             setIsLoading(false);
+            // setIsReloadRestaurants(true); => esta ultima parte es para actualizar la lista
             toastRef.current.show(
               "Error al subir el restaurante, intente más tarde"
             );

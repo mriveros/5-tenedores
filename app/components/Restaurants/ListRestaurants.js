@@ -48,7 +48,7 @@ function Restaurant(props) {
       .then(result => {
         setImageRestaurant(result);
       });
-  });
+  }, []);
   return (
     <TouchableOpacity onPress={() => console.log("Ir al Restaurante")}>
       <View style={styles.viewRestaurant}>
